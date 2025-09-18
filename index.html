@@ -453,7 +453,6 @@
             </div>
         </form>
     </main>
-
     <div id="modal-overlay" style="display: none;">
         <div id="modal-window">
             <p id="modal-message"></p>
@@ -463,10 +462,8 @@
             </div>
         </div>
     </div>
-
     <script>
         let currentLanguage = 'ru';
-
         const ruBtn = document.getElementById('ru-btn');
         const enBtn = document.getElementById('en-btn');
         const formTitle = document.getElementById('form-title');
@@ -479,7 +476,6 @@
         const apartmentInput = document.getElementById('apartment');
         const devicesSelect = document.getElementById('devices');
         const submitButton = document.getElementById('submit-button');
-
         const translations = {
             ru: {
                 formTitle: 'Wi-Fi Доступ',
@@ -512,7 +508,6 @@
                 errorFields: 'Please fill in all required fields.'
             }
         };
-
         function updateTexts() {
             const t = translations[currentLanguage];
             formTitle.textContent = t.formTitle;
@@ -531,7 +526,6 @@
                 introEn.style.display = 'block';
             }
         }
-
         function showModal(message, showButtons = false) {
             const overlay = document.getElementById('modal-overlay');
             const modalWindow = document.getElementById('modal-window');
@@ -541,7 +535,6 @@
             voucherButtons.style.display = showButtons ? 'block' : 'none';
             overlay.style.display = 'flex';
         }
-
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert(currentLanguage === 'ru' ? 'Ваучеры скопированы!' : 'Vouchers copied!');
@@ -549,23 +542,19 @@
                 alert(currentLanguage === 'ru' ? 'Ошибка копирования' : 'Copy error');
             });
         }
-
         function resetForm() {
             document.getElementById('wifi-form').reset();
             document.getElementById('modal-overlay').style.display = 'none';
         }
-
         // Event listeners
         ruBtn.addEventListener('click', () => {
             currentLanguage = 'ru';
             updateTexts();
         });
-
         enBtn.addEventListener('click', () => {
             currentLanguage = 'en';
             updateTexts();
         });
-
         document.getElementById('copy-button').addEventListener('click', () => {
             const vouchers = document.getElementById('voucher-list');
             if (vouchers) {
@@ -573,57 +562,53 @@
                 copyToClipboard(text);
             }
         });
-
         document.getElementById('back-button').addEventListener('click', resetForm);
-
-document.getElementById('wifi-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const fio = fioInput.value.trim();
-    const apartment = apartmentInput.value.trim();
-    const numDevices = parseInt(devicesSelect.value, 10);
-    if (!fio || !apartment || !numDevices) {
-        showModal(translations[currentLanguage].errorFields);
-        return;
-    }
-    const data = {
-        fio: fio,
-        apartment: apartment,
-        num_devices: numDevices,
-        language: currentLanguage
-    };
-    // ИСПРАВЛЕННЫЙ URL: убран дубликат префикса
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwibvpVaqPn7o9XvuRCnM-HME1S5qRWll-eGYnI3jyT4UBFTgGtFh7Fu6-ElsAhE11z/exec';
-    fetch(scriptUrl, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-        // УБРАН mode: 'no-cors' — теперь использует 'cors' по умолчанию
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(result => {
-        if (result && result.vouchers && result.vouchers.length > 0) {
-            const t = translations[currentLanguage];
-            let voucherList = `<p>${t.connectText}</p><ul id="voucher-list">`;
-            result.vouchers.forEach(voucher => {
-                voucherList += `<li>${voucher}</li>`;
+        // ИСПРАВЛЕННЫЙ fetch (из моего предыдущего ответа)
+        document.getElementById('wifi-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fio = fioInput.value.trim();
+            const apartment = apartmentInput.value.trim();
+            const numDevices = parseInt(devicesSelect.value, 10);
+            if (!fio || !apartment || !numDevices) {
+                showModal(translations[currentLanguage].errorFields);
+                return;
+            }
+            const data = {
+                fio: fio,
+                apartment: apartment,
+                num_devices: numDevices,
+                language: currentLanguage
+            };
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbwibvpVaqPn7o9XvuRCnM-HME1S5qRWll-eGYnI3jyT4UBFTgGtFh7Fu6-ElsAhE11z/exec';
+            fetch(scriptUrl, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result && result.vouchers && result.vouchers.length > 0) {
+                    const t = translations[currentLanguage];
+                    let voucherList = `<p>${t.connectText}</p><ul id="voucher-list">`;
+                    result.vouchers.forEach(voucher => {
+                        voucherList += `<li>${voucher}</li>`;
+                    });
+                    voucherList += '</ul>';
+                    showModal(voucherList, true);
+                } else {
+                    showModal(translations[currentLanguage].errorNoVouchers);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal(translations[currentLanguage].errorNoVouchers);
             });
-            voucherList += '</ul>';
-            showModal(voucherList, true);
-        } else {
-            showModal(translations[currentLanguage].errorNoVouchers);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);  // Откройте консоль (F12) для детальной ошибки
-        showModal(translations[currentLanguage].errorNoVouchers);
-    });
-});
-
+        });
         // Initial load
         updateTexts();
     </script>
@@ -631,3 +616,4 @@ document.getElementById('wifi-form').addEventListener('submit', function(event) 
 </html>
 
 ```
+
