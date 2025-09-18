@@ -572,13 +572,18 @@
             }
             overlay.style.display = 'flex';
         }
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(currentLanguage === 'ru' ? 'Ваучеры скопированы!' : 'Vouchers copied!');
-            }).catch(() => {
-                alert(currentLanguage === 'ru' ? 'Ошибка копирования' : 'Copy error');
-            });
-        }
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const message = currentLanguage === 'ru' ? 'Ваучеры успешно скопированы!' : 'Vouchers successfully copied!';
+        showModal(message, false); // Показываем модальное окно без кнопок
+        setTimeout(() => {
+            document.getElementById('modal-overlay').style.display = 'none'; // Закрываем через 2 секунды
+        }, 2000);
+    }).catch(() => {
+        const errorMessage = currentLanguage === 'ru' ? 'Ошибка при копировании ваучеров.' : 'Error copying vouchers.';
+        showModal(errorMessage, false, true); // Показываем ошибку с кнопкой "Вернуться"
+    });
+}
         function resetForm() {
             document.getElementById('wifi-form').reset();
             document.getElementById('modal-overlay').style.display = 'none';
@@ -656,3 +661,4 @@
     </script>
 </body>
 </html>
+
