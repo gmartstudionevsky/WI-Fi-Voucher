@@ -1,0 +1,631 @@
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wi-Fi Voucher | ARTSTUDIO Nevsky</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        /* Подключение шрифта Circe */
+        @font-face {
+            font-family: 'Circe';
+            src: url('https://fonts.gstatic.com/s/circe/v1/circe-light.woff2') format('woff2'),
+                 url('https://fonts.gstatic.com/s/circe/v1/circe-light.woff') format('woff');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Circe';
+            src: url('https://fonts.gstatic.com/s/circe/v1/circe.woff2') format('woff2'),
+                 url('https://fonts.gstatic.com/s/circe/v1/circe.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Circe';
+            src: url('https://fonts.gstatic.com/s/circe/v1/circe-bold.woff2') format('woff2'),
+                 url('https://fonts.gstatic.com/s/circe/v1/circe-bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+        }
+        /* Базовые стили */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Circe', sans-serif;
+            background-color: #ffffff;
+            color: #262d36;
+        }
+        header img {
+            max-width: 200px;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            text-align: center;
+            margin: 0;
+        }
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-section {
+            margin-bottom: 1.5rem;
+        }
+        .form-section h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            margin-top: 0;
+        }
+        .form-section input[type="text"],
+        .form-section select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            font-family: 'Circe', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+        button, select, input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            font-family: 'Circe', sans-serif;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #c49a5f;
+            color: white;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #a47f48;
+        }
+        .language-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+        .language-toggle button {
+            width: auto;
+            padding: 0.5rem 1rem;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+                background-size: cover;
+            }
+            main {
+                padding: 1.5rem;
+                margin: 1rem auto;
+                box-shadow: none;
+            }
+            .form-section {
+                margin-bottom: 1rem;
+            }
+            .form-section h2 {
+                font-size: 1.25rem;
+                margin-bottom: 0.4rem;
+            }
+            .form-section input[type="text"],
+            .form-section select {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+            header img {
+                max-width: 150px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            button, select, input[type="text"] {
+                font-size: 1rem;
+                padding: 0.5rem;
+            }
+            .language-toggle {
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+            .language-toggle button {
+                width: 100%;
+            }
+        }
+        /* Стилизация SELECT */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-family: 'Circe', sans-serif;
+            font-size: 1rem;
+            color: #262d36;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg"%3E%3Cpolygon points="70,100 15,40 125,40" fill="%23666"%3E%3C/polygon%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.65rem auto;
+        }
+        select:focus {
+            outline: none;
+            border-color: #c49a5f;
+            box-shadow: 0 0 0 3px rgba(196, 154, 95, 0.3);
+        }
+        header {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        /* Для мобильных */
+        @media (max-width: 600px) {
+            .main-logo img {
+                background-color: transparent;
+                max-width: 200px;
+            }
+        }
+        .language-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 3rem;
+        }
+        .language-toggle button {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #c49a5f;
+            background-color: #ffffff;
+            color: #c49a5f;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        /* При наведении */
+        .language-toggle button:hover {
+            background-color: #c49a5f;
+            color: #ffffff;
+        }
+        h1#form-title {
+            font-size: 2rem;
+            font-weight: 400;
+            text-align: center;
+            margin-top: 1rem;
+            color: #262d36;
+        }
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(38, 45, 54, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        #modal-window {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 90%;
+            min-width: 300px;
+            width: auto;
+            box-sizing: border-box;
+            font-family: 'Circe', sans-serif;
+            animation: modalFadeIn 0.3s ease-out;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        #modal-window p {
+            font-size: 1.1rem;
+            color: #262d36;
+            margin-bottom: 1.5rem;
+            word-wrap: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            margin: 0 auto 1.5rem;
+            text-align: left;
+        }
+        #modal-window ul {
+            text-align: left;
+            padding-left: 1.5rem;
+        }
+        #modal-window li {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #c49a5f;
+        }
+        #modal-ok-button, #copy-button, #back-button {
+            padding: 0.75rem 2rem;
+            background-color: #c49a5f;
+            color: #ffffff;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Circe', sans-serif;
+            width: auto;
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        #modal-ok-button:hover, #copy-button:hover, #back-button:hover {
+            background-color: #a47f48;
+        }
+        #copy-button {
+            background-color: #28a745;
+        }
+        #copy-button:hover {
+            background-color: #218838;
+        }
+        #back-button {
+            background-color: #6c757d;
+        }
+        #back-button:hover {
+            background-color: #5a6268;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .intro-section {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Circe', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #262d36;
+            text-align: left;
+        }
+        .intro-text {
+            max-width: 100%;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .intro-text p {
+            margin: 0 auto 1rem;
+            max-width: 100%;
+            text-align: left;
+        }
+        .intro-text ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 auto 1rem;
+            display: inline-block;
+        }
+        .intro-text ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+        .intro-text ul li:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #c49a5f;
+            font-size: 1.2rem;
+        }
+        .whatsapp-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            margin: 0.5rem;
+            font-family: 'Circe', sans-serif;
+        }
+        .whatsapp-button:hover {
+            background-color: #128C7E;
+        }
+        @media (max-width: 600px) {
+            .intro-section {
+                margin: 1rem auto;
+                padding: 1rem;
+                font-size: 0.95rem;
+                text-align: left;
+            }
+            .intro-text p {
+                margin: 0 auto 0.75rem;
+            }
+            .intro-text ul {
+                margin: 0 auto 0.75rem;
+            }
+            .intro-text ul li {
+                padding-left: 1.2rem;
+                margin-bottom: 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://static.tildacdn.com/tild3763-3662-4234-a161-616361613065/____1.png" alt="ARTSTUDIO Nevsky Logo" class="main-logo">
+        <div class="language-toggle">
+            <button id="ru-btn">Русский</button>
+            <button id="en-btn">English</button>
+        </div>
+        <h1 id="form-title">Wi-Fi Доступ</h1>
+    </header>
+
+    <section class="intro-section">
+        <div id="intro-ru" class="intro-text">
+            <p>Добро пожаловать в апарт-отель ARTSTUDIO Nevsky. Для подключения к Wi-Fi заполните поля ниже, чтобы получить ваучер-код доступа.</p>
+            <p>Затем подключите устройство к сети <strong>ARTSTUDIO_Nevsky</strong>, в открывшемся окне введите полученный ваучер.</p>
+            <ul>
+                <li>Один ваучер на 5 устройств</li>
+                <li>Запросить через эту форму можно неограниченное количество ваучеров</li>
+            </ul>
+            <p>В случае вопросов обратитесь на ресепшен: <a href="tel:+79313172030" style="color: #c49a5f;">+7 (931) 317-20-30</a> в WhatsApp (<a href="https://wa.me/79313172030" class="whatsapp-button">Написать в WhatsApp</a>) или набрав 111 по внутреннему телефону.</p>
+        </div>
+        <div id="intro-en" class="intro-text" style="display: none;">
+            <p>Welcome to ARTSTUDIO Nevsky apart-hotel. To connect to Wi-Fi, fill in the fields below to get your access voucher code.</p>
+            <p>Then connect your device to the <strong>ARTSTUDIO_Nevsky</strong> network and enter the voucher in the pop-up window.</p>
+            <ul>
+                <li>One voucher for 5 devices</li>
+                <li>You can request an unlimited number of vouchers through this form</li>
+            </ul>
+            <p>If you have any questions, please contact reception: <a href="tel:+79313172030" style="color: #c49a5f;">+7 (931) 317-20-30</a> via WhatsApp (<a href="https://wa.me/79313172030" class="whatsapp-button">Message on WhatsApp</a>) or dial 111 on the internal phone.</p>
+        </div>
+    </section>
+
+    <main>
+        <form id="wifi-form">
+            <div class="form-section">
+                <h2 id="fio-title">ФИО</h2>
+                <input type="text" id="fio" name="fio" placeholder="Введите ФИО" required>
+            </div>
+            <div class="form-section">
+                <h2 id="apt-title">№ Апартамента</h2>
+                <input type="text" id="apartment" name="apartment" placeholder="Введите номер апартамента" required>
+            </div>
+            <div class="form-section">
+                <h2 id="devices-title">Количество устройств</h2>
+                <select id="devices" name="devices" required>
+                    <option value="">Выберите количество устройств</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+            <div class="form-section">
+                <button type="submit" id="submit-button">Запросить ваучер</button>
+            </div>
+        </form>
+    </main>
+
+    <div id="modal-overlay" style="display: none;">
+        <div id="modal-window">
+            <p id="modal-message"></p>
+            <div id="voucher-buttons" style="display: none;">
+                <button id="copy-button">Скопировать ваучеры</button>
+                <button id="back-button">Вернуться к форме запроса</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'ru';
+
+        const ruBtn = document.getElementById('ru-btn');
+        const enBtn = document.getElementById('en-btn');
+        const formTitle = document.getElementById('form-title');
+        const introRu = document.getElementById('intro-ru');
+        const introEn = document.getElementById('intro-en');
+        const fioTitle = document.getElementById('fio-title');
+        const aptTitle = document.getElementById('apt-title');
+        const devicesTitle = document.getElementById('devices-title');
+        const fioInput = document.getElementById('fio');
+        const apartmentInput = document.getElementById('apartment');
+        const devicesSelect = document.getElementById('devices');
+        const submitButton = document.getElementById('submit-button');
+
+        const translations = {
+            ru: {
+                formTitle: 'Wi-Fi Доступ',
+                fioTitle: 'ФИО',
+                fioPlaceholder: 'Введите ФИО',
+                aptTitle: '№ Апартамента',
+                aptPlaceholder: 'Введите номер апартамента',
+                devicesTitle: 'Количество устройств',
+                devicesPlaceholder: 'Выберите количество устройств',
+                submitButton: 'Запросить ваучер',
+                connectText: 'Подключите устройство к сети <strong>ARTSTUDIO_Nevsky</strong>, в открывшемся окне введите ваучер.',
+                copyButton: 'Скопировать ваучеры',
+                backButton: 'Вернуться к форме запроса',
+                errorNoVouchers: 'Ваучеры временно недоступны. Обратитесь на ресепшен.',
+                errorFields: 'Пожалуйста, заполните все обязательные поля.'
+            },
+            en: {
+                formTitle: 'Wi-Fi Access',
+                fioTitle: 'Full Name',
+                fioPlaceholder: 'Enter full name',
+                aptTitle: 'Apartment Number',
+                aptPlaceholder: 'Enter apartment number',
+                devicesTitle: 'Number of Devices',
+                devicesPlaceholder: 'Select number of devices',
+                submitButton: 'Request Voucher',
+                connectText: 'Connect your device to the <strong>ARTSTUDIO_Nevsky</strong> network and enter the voucher in the pop-up window.',
+                copyButton: 'Copy Vouchers',
+                backButton: 'Back to Request Form',
+                errorNoVouchers: 'Vouchers are temporarily unavailable. Please contact reception.',
+                errorFields: 'Please fill in all required fields.'
+            }
+        };
+
+        function updateTexts() {
+            const t = translations[currentLanguage];
+            formTitle.textContent = t.formTitle;
+            fioTitle.textContent = t.fioTitle;
+            fioInput.placeholder = t.fioPlaceholder;
+            aptTitle.textContent = t.aptTitle;
+            apartmentInput.placeholder = t.aptPlaceholder;
+            devicesTitle.textContent = t.devicesTitle;
+            devicesSelect.options[0].textContent = t.devicesPlaceholder;
+            submitButton.textContent = t.submitButton;
+            if (currentLanguage === 'ru') {
+                introRu.style.display = 'block';
+                introEn.style.display = 'none';
+            } else {
+                introRu.style.display = 'none';
+                introEn.style.display = 'block';
+            }
+        }
+
+        function showModal(message, showButtons = false) {
+            const overlay = document.getElementById('modal-overlay');
+            const modalWindow = document.getElementById('modal-window');
+            const modalMessage = document.getElementById('modal-message');
+            const voucherButtons = document.getElementById('voucher-buttons');
+            modalMessage.innerHTML = message;
+            voucherButtons.style.display = showButtons ? 'block' : 'none';
+            overlay.style.display = 'flex';
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(currentLanguage === 'ru' ? 'Ваучеры скопированы!' : 'Vouchers copied!');
+            }).catch(() => {
+                alert(currentLanguage === 'ru' ? 'Ошибка копирования' : 'Copy error');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('wifi-form').reset();
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // Event listeners
+        ruBtn.addEventListener('click', () => {
+            currentLanguage = 'ru';
+            updateTexts();
+        });
+
+        enBtn.addEventListener('click', () => {
+            currentLanguage = 'en';
+            updateTexts();
+        });
+
+        document.getElementById('copy-button').addEventListener('click', () => {
+            const vouchers = document.getElementById('voucher-list');
+            if (vouchers) {
+                const text = Array.from(vouchers.querySelectorAll('li')).map(li => li.textContent).join('\n');
+                copyToClipboard(text);
+            }
+        });
+
+        document.getElementById('back-button').addEventListener('click', resetForm);
+
+        document.getElementById('wifi-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fio = fioInput.value.trim();
+            const apartment = apartmentInput.value.trim();
+            const numDevices = parseInt(devicesSelect.value, 10);
+
+            if (!fio || !apartment || !numDevices) {
+                showModal(translations[currentLanguage].errorFields);
+                return;
+            }
+
+            const data = {
+                fio: fio,
+                apartment: apartment,
+                num_devices: numDevices,
+                language: currentLanguage
+            };
+
+            // Замените на ваш Google Apps Script URL
+            const scriptUrl = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwibvpVaqPn7o9XvuRCnM-HME1S5qRWll-eGYnI3jyT4UBFTgGtFh7Fu6-ElsAhE11z/exec'; // Создайте новый скрипт для Wi-Fi
+
+            fetch(scriptUrl, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'no-cors'
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result && result.vouchers && result.vouchers.length > 0) {
+                    const t = translations[currentLanguage];
+                    let voucherList = `<p>${t.connectText}</p><ul id="voucher-list">`;
+                    result.vouchers.forEach(voucher => {
+                        voucherList += `<li>${voucher}</li>`;
+                    });
+                    voucherList += '</ul>';
+                    showModal(voucherList, true);
+                } else {
+                    showModal(translations[currentLanguage].errorNoVouchers);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal(translations[currentLanguage].errorNoVouchers);
+            });
+        });
+
+        // Initial load
+        updateTexts();
+    </script>
+</body>
+</html>
+```
