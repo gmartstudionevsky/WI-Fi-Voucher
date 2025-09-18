@@ -576,56 +576,58 @@
 
         document.getElementById('back-button').addEventListener('click', resetForm);
 
-        document.getElementById('wifi-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const fio = fioInput.value.trim();
-            const apartment = apartmentInput.value.trim();
-            const numDevices = parseInt(devicesSelect.value, 10);
-
-            if (!fio || !apartment || !numDevices) {
-                showModal(translations[currentLanguage].errorFields);
-                return;
-            }
-
-            const data = {
-                fio: fio,
-                apartment: apartment,
-                num_devices: numDevices,
-                language: currentLanguage
-            };
-
-            // Замените на ваш Google Apps Script URL
-            const scriptUrl = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwibvpVaqPn7o9XvuRCnM-HME1S5qRWll-eGYnI3jyT4UBFTgGtFh7Fu6-ElsAhE11z/exec'; // Создайте новый скрипт для Wi-Fi
-
-            fetch(scriptUrl, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'Content-Type': 'application/json' },
-                mode: 'no-cors'
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result && result.vouchers && result.vouchers.length > 0) {
-                    const t = translations[currentLanguage];
-                    let voucherList = `<p>${t.connectText}</p><ul id="voucher-list">`;
-                    result.vouchers.forEach(voucher => {
-                        voucherList += `<li>${voucher}</li>`;
-                    });
-                    voucherList += '</ul>';
-                    showModal(voucherList, true);
-                } else {
-                    showModal(translations[currentLanguage].errorNoVouchers);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showModal(translations[currentLanguage].errorNoVouchers);
+document.getElementById('wifi-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const fio = fioInput.value.trim();
+    const apartment = apartmentInput.value.trim();
+    const numDevices = parseInt(devicesSelect.value, 10);
+    if (!fio || !apartment || !numDevices) {
+        showModal(translations[currentLanguage].errorFields);
+        return;
+    }
+    const data = {
+        fio: fio,
+        apartment: apartment,
+        num_devices: numDevices,
+        language: currentLanguage
+    };
+    // ИСПРАВЛЕННЫЙ URL: убран дубликат префикса
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwibvpVaqPn7o9XvuRCnM-HME1S5qRWll-eGYnI3jyT4UBFTgGtFh7Fu6-ElsAhE11z/exec';
+    fetch(scriptUrl, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+        // УБРАН mode: 'no-cors' — теперь использует 'cors' по умолчанию
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result && result.vouchers && result.vouchers.length > 0) {
+            const t = translations[currentLanguage];
+            let voucherList = `<p>${t.connectText}</p><ul id="voucher-list">`;
+            result.vouchers.forEach(voucher => {
+                voucherList += `<li>${voucher}</li>`;
             });
-        });
+            voucherList += '</ul>';
+            showModal(voucherList, true);
+        } else {
+            showModal(translations[currentLanguage].errorNoVouchers);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);  // Откройте консоль (F12) для детальной ошибки
+        showModal(translations[currentLanguage].errorNoVouchers);
+    });
+});
 
         // Initial load
         updateTexts();
     </script>
 </body>
 </html>
+
 ```
