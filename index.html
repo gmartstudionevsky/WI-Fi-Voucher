@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSP для разрешения fetch (удалите в продакшене, если не нужно) -->
+    <!-- CSP для разрешения fetch -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com;">
     <title>Wi-Fi Voucher | ARTSTUDIO Nevsky</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
-        /* Подключение шрифта Circe локально из /fonts */
+        /* Подключение шрифта Circe */
         @font-face {
             font-family: 'Circe';
             src: url('./fonts/circe-light.woff2') format('woff2');
@@ -266,8 +266,26 @@
             padding: 0.5rem;
             border-radius: 0.5rem;
             border-left: 4px solid #c49a5f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        #modal-ok-button, #copy-button, #back-button, #error-back-button {
+        .voucher-copy-btn {
+            padding: 0.5rem 1rem;
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Circe', sans-serif;
+        }
+        .voucher-copy-btn:hover {
+            background-color: #218838;
+        }
+        #modal-ok-button, #copy-all-button, #back-button, #error-back-button, #request-another-button {
             padding: 0.75rem 2rem;
             background-color: #c49a5f;
             color: #ffffff;
@@ -284,13 +302,13 @@
             display: inline-block;
             margin: 0.5rem;
         }
-        #modal-ok-button:hover, #copy-button:hover, #back-button:hover, #error-back-button:hover {
+        #modal-ok-button:hover, #copy-all-button:hover, #back-button:hover, #error-back-button:hover, #request-another-button:hover {
             background-color: #a47f48;
         }
-        #copy-button {
+        #copy-all-button {
             background-color: #28a745;
         }
-        #copy-button:hover {
+        #copy-all-button:hover {
             background-color: #218838;
         }
         #back-button, #error-back-button {
@@ -299,14 +317,14 @@
         #back-button:hover, #error-back-button:hover {
             background-color: #5a6268;
         }
-        .error-contacts {
+        .error-contacts, .success-contacts {
             background: #f8f9fa;
             padding: 1rem;
             border-radius: 0.5rem;
             margin: 1rem 0;
             text-align: left;
         }
-        .error-contacts p {
+        .error-contacts p, .success-contacts p {
             margin: 0 0 0.5rem 0;
             font-size: 1rem;
         }
@@ -370,6 +388,12 @@
             color: #c49a5f;
             font-size: 1.2rem;
         }
+        .success-message {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-align: center;
+        }
         @media (max-width: 600px) {
             .intro-section {
                 margin: 1rem auto;
@@ -430,10 +454,6 @@
                 <input type="number" id="apartment" name="apartment" placeholder="Введите номер апартамента (только цифры)" min="1" max="999" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
             <div class="form-section">
-                <h2 id="phone-title">Номер телефона</h2>
-                <input type="text" id="phone" name="phone" placeholder="Введите номер телефона (+7 или 8...)" required oninput="this.value = this.value.replace(/[^0-9+]/g, '');">
-            </div>
-            <div class="form-section">
                 <h2 id="devices-title">Количество устройств</h2>
                 <select id="devices" name="devices" required>
                     <option value="">Выберите количество устройств</option>
@@ -468,11 +488,14 @@
         <div id="modal-window">
             <p id="modal-message"></p>
             <div id="voucher-buttons" style="display: none;">
-                <button id="copy-button">Скопировать ваучеры</button>
+                <button id="copy-all-button">Скопировать все ваучеры</button>
                 <button id="back-button">Вернуться к форме запроса</button>
             </div>
             <div id="error-buttons" style="display: none;">
                 <button id="error-back-button">Вернуться к заполнению формы</button>
+            </div>
+            <div id="success-content" style="display: none;">
+                <button id="request-another-button">Запросить ещё</button>
             </div>
         </div>
     </div>
@@ -485,11 +508,9 @@
         const introEn = document.getElementById('intro-en');
         const fioTitle = document.getElementById('fio-title');
         const aptTitle = document.getElementById('apt-title');
-        const phoneTitle = document.getElementById('phone-title');
         const devicesTitle = document.getElementById('devices-title');
         const fioInput = document.getElementById('fio');
         const apartmentInput = document.getElementById('apartment');
-        const phoneInput = document.getElementById('phone');
         const devicesSelect = document.getElementById('devices');
         const submitButton = document.getElementById('submit-button');
         const translations = {
@@ -499,18 +520,21 @@
                 fioPlaceholder: 'Введите ФИО',
                 aptTitle: '№ Апартамента',
                 aptPlaceholder: 'Введите номер апартамента',
-                phoneTitle: 'Номер телефона',
-                phonePlaceholder: 'Введите номер телефона',
                 devicesTitle: 'Количество устройств',
                 devicesPlaceholder: 'Выберите количество устройств',
                 submitButton: 'Запросить ваучер',
                 connectText: 'Подключите устройство к сети <strong>ARTSTUDIO_Nevsky</strong>, в открывшемся окне введите ваучер.',
-                copyButton: 'Скопировать ваучеры',
+                voucherInfo: 'Один ваучер позволяет подключить до 5 устройств.',
+                copyButton: 'Скопировать',
+                copyAllButton: 'Скопировать все ваучеры',
                 backButton: 'Вернуться к форме запроса',
+                requestAnotherButton: 'Запросить ещё',
                 errorNoVouchers: 'Ваучеры временно недоступны.',
                 errorFields: 'Пожалуйста, заполните все обязательные поля.',
                 errorContacts: 'В случае вопросов обратитесь на ресепшен: <a href="tel:+79313172030">+7 (931) 317-20-30</a> в WhatsApp <a href="https://wa.me/79313172030" class="whatsapp-button">Написать в WhatsApp</a> или набрав 111 по внутреннему телефону.',
-                errorBackButton: 'Вернуться к заполнению формы'
+                errorBackButton: 'Вернуться к заполнению формы',
+                successMessage: 'Ваучеры успешно скопированы!',
+                successContacts: 'В случае вопросов обратитесь на ресепшен: <a href="tel:+79313172030">+7 (931) 317-20-30</a> в WhatsApp <a href="https://wa.me/79313172030" class="whatsapp-button">Написать в WhatsApp</a> или набрав 111 по внутреннему телефону.'
             },
             en: {
                 formTitle: 'Wi-Fi Access',
@@ -518,18 +542,21 @@
                 fioPlaceholder: 'Enter full name',
                 aptTitle: 'Apartment Number',
                 aptPlaceholder: 'Enter apartment number',
-                phoneTitle: 'Phone Number',
-                phonePlaceholder: 'Enter phone number',
                 devicesTitle: 'Number of Devices',
                 devicesPlaceholder: 'Select number of devices',
                 submitButton: 'Request Voucher',
                 connectText: 'Connect your device to the <strong>ARTSTUDIO_Nevsky</strong> network and enter the voucher in the pop-up window.',
-                copyButton: 'Copy Vouchers',
+                voucherInfo: 'One voucher allows connection for up to 5 devices.',
+                copyButton: 'Copy',
+                copyAllButton: 'Copy All Vouchers',
                 backButton: 'Back to Request Form',
+                requestAnotherButton: 'Request Another',
                 errorNoVouchers: 'Vouchers are temporarily unavailable.',
                 errorFields: 'Please fill in all required fields.',
                 errorContacts: 'If you have questions, contact reception: <a href="tel:+79313172030">+7 (931) 317-20-30</a> via WhatsApp <a href="https://wa.me/79313172030" class="whatsapp-button">Message on WhatsApp</a> or dial 111 on the internal phone.',
-                errorBackButton: 'Back to Form'
+                errorBackButton: 'Back to Form',
+                successMessage: 'Vouchers successfully copied!',
+                successContacts: 'If you have questions, contact reception: <a href="tel:+79313172030">+7 (931) 317-20-30</a> via WhatsApp <a href="https://wa.me/79313172030" class="whatsapp-button">Message on WhatsApp</a> or dial 111 on the internal phone.'
             }
         };
         function updateTexts() {
@@ -539,14 +566,13 @@
             fioInput.placeholder = t.fioPlaceholder;
             aptTitle.textContent = t.aptTitle;
             apartmentInput.placeholder = t.aptPlaceholder;
-            phoneTitle.textContent = t.phoneTitle;
-            phoneInput.placeholder = t.phonePlaceholder;
             devicesTitle.textContent = t.devicesTitle;
             devicesSelect.options[0].textContent = t.devicesPlaceholder;
             submitButton.textContent = t.submitButton;
-            document.getElementById('copy-button').textContent = t.copyButton;
+            document.getElementById('copy-all-button').textContent = t.copyAllButton;
             document.getElementById('back-button').textContent = t.backButton;
             document.getElementById('error-back-button').textContent = t.errorBackButton;
+            document.getElementById('request-another-button').textContent = t.requestAnotherButton;
             if (currentLanguage === 'ru') {
                 introRu.style.display = 'block';
                 introEn.style.display = 'none';
@@ -555,35 +581,50 @@
                 introEn.style.display = 'block';
             }
         }
-        function showModal(message, showButtons = false, isError = false) {
+        function showModal(message, showButtons = false, isError = false, showSuccess = false, vouchers = []) {
             const overlay = document.getElementById('modal-overlay');
             const modalWindow = document.getElementById('modal-window');
             const modalMessage = document.getElementById('modal-message');
             const voucherButtons = document.getElementById('voucher-buttons');
             const errorButtons = document.getElementById('error-buttons');
+            const successContent = document.getElementById('success-content');
+
             modalMessage.innerHTML = message;
             voucherButtons.style.display = showButtons ? 'block' : 'none';
-            if (isError) {
+            errorButtons.style.display = isError ? 'block' : 'none';
+            successContent.style.display = showSuccess ? 'block' : 'none';
+
+            if (showSuccess) {
+                const t = translations[currentLanguage];
+                modalMessage.innerHTML = `
+                    <p class="success-message">${t.successMessage}</p>
+                    <p>${t.connectText}</p>
+                    <p>${t.voucherInfo}</p>
+                    <ul id="voucher-list">
+                        ${vouchers.map(voucher => `<li>${voucher}</li>`).join('')}
+                    </ul>
+                    <div class="success-contacts"><p>${t.successContacts}</p></div>
+                `;
+            } else if (isError) {
                 const contactsHtml = `<div class="error-contacts"><p>${translations[currentLanguage].errorContacts}</p></div>`;
                 modalMessage.innerHTML += contactsHtml;
-                errorButtons.style.display = 'block';
-            } else {
-                errorButtons.style.display = 'none';
             }
+
             overlay.style.display = 'flex';
         }
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        const message = currentLanguage === 'ru' ? 'Ваучеры успешно скопированы!' : 'Vouchers successfully copied!';
-        showModal(message, false); // Показываем модальное окно без кнопок
-        setTimeout(() => {
-            document.getElementById('modal-overlay').style.display = 'none'; // Закрываем через 2 секунды
-        }, 2000);
-    }).catch(() => {
-        const errorMessage = currentLanguage === 'ru' ? 'Ошибка при копировании ваучеров.' : 'Error copying vouchers.';
-        showModal(errorMessage, false, true); // Показываем ошибку с кнопкой "Вернуться"
-    });
-}
+        function copyToClipboard(text, isSingle = false) {
+            navigator.clipboard.writeText(text).then(() => {
+                const message = translations[currentLanguage].successMessage;
+                if (isSingle) {
+                    showModal(`<p class="success-message">${message}</p>`, false, false, false);
+                    setTimeout(() => {
+                        document.getElementById('modal-overlay').style.display = 'none';
+                    }, 2000);
+                }
+            }).catch(() => {
+                showModal(translations[currentLanguage].errorNoVouchers, false, true);
+            });
+        }
         function resetForm() {
             document.getElementById('wifi-form').reset();
             document.getElementById('modal-overlay').style.display = 'none';
@@ -597,29 +638,21 @@ function copyToClipboard(text) {
             currentLanguage = 'en';
             updateTexts();
         });
-        document.getElementById('copy-button').addEventListener('click', () => {
-            const vouchers = document.getElementById('voucher-list');
-            if (vouchers) {
-                const text = Array.from(vouchers.querySelectorAll('li')).map(li => li.textContent).join('\n');
-                copyToClipboard(text);
-            }
-        });
         document.getElementById('back-button').addEventListener('click', resetForm);
         document.getElementById('error-back-button').addEventListener('click', resetForm);
+        document.getElementById('request-another-button').addEventListener('click', resetForm);
         document.getElementById('wifi-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const fio = fioInput.value.trim();
             const apartment = apartmentInput.value.trim();
-            const phone = phoneInput.value.trim();
             const numDevices = parseInt(devicesSelect.value, 10);
-            if (!fio || !apartment || !phone || !numDevices) {
+            if (!fio || !apartment || !numDevices) {
                 showModal(translations[currentLanguage].errorFields, false, true);
                 return;
             }
             const data = {
                 fio: fio,
                 apartment: apartment,
-                phone: phone,  // Новое поле
                 num_devices: numDevices,
                 language: currentLanguage
             };
@@ -627,7 +660,7 @@ function copyToClipboard(text) {
             fetch(scriptUrl, {
                 method: 'POST',
                 body: JSON.stringify(data),
-                headers: { 
+                headers: {
                     'Content-Type': 'text/plain;charset=utf-8'
                 }
             })
@@ -642,11 +675,24 @@ function copyToClipboard(text) {
                 if (result && result.vouchers && result.vouchers.length > 0) {
                     const t = translations[currentLanguage];
                     let voucherList = `<p>${t.connectText}</p><ul id="voucher-list">`;
-                    result.vouchers.forEach(voucher => {
-                        voucherList += `<li>${voucher}</li>`;
+                    result.vouchers.forEach((voucher, index) => {
+                        voucherList += `<li>${voucher} <button class="voucher-copy-btn" data-voucher="${voucher}" data-index="${index}">${t.copyButton}</button></li>`;
                     });
                     voucherList += '</ul>';
-                    showModal(voucherList, true);
+                    showModal(voucherList, result.vouchers.length > 1, false);
+                    // Add event listeners for individual copy buttons
+                    document.querySelectorAll('.voucher-copy-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const voucher = btn.getAttribute('data-voucher');
+                            copyToClipboard(voucher, true);
+                        });
+                    });
+                    // Show success modal after copying all
+                    document.getElementById('copy-all-button').addEventListener('click', () => {
+                        const text = result.vouchers.join('\n');
+                        copyToClipboard(text);
+                        showModal('', false, false, true, result.vouchers);
+                    });
                 } else {
                     showModal(translations[currentLanguage].errorNoVouchers, false, true);
                 }
@@ -661,4 +707,3 @@ function copyToClipboard(text) {
     </script>
 </body>
 </html>
-
