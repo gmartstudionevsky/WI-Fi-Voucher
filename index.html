@@ -7,29 +7,29 @@
     <title>Wi-Fi Voucher | ARTSTUDIO Nevsky</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
-        /* Подключение шрифта Circe */
+/* Подключение шрифта Circe локально */
         @font-face {
             font-family: 'Circe';
-            src: url('https://fonts.gstatic.com/s/circe/v1/circe-light.woff2') format('woff2'),
-                 url('https://fonts.gstatic.com/s/circe/v1/circe-light.woff') format('woff');
+            src: url('./fonts/circe-light.woff2') format('woff2'),
+                 url('./fonts/circe-light.woff') format('woff');  /* Если есть woff, добавьте */
             font-weight: 300;
             font-style: normal;
         }
         @font-face {
             font-family: 'Circe';
-            src: url('https://fonts.gstatic.com/s/circe/v1/circe.woff2') format('woff2'),
-                 url('https://fonts.gstatic.com/s/circe/v1/circe.woff') format('woff');
+            src: url('./fonts/circe.woff2') format('woff2'),
+                 url('./fonts/circe.woff') format('woff');
             font-weight: 400;
             font-style: normal;
         }
         @font-face {
             font-family: 'Circe';
-            src: url('https://fonts.gstatic.com/s/circe/v1/circe-bold.woff2') format('woff2'),
-                 url('https://fonts.gstatic.com/s/circe/v1/circe-bold.woff') format('woff');
+            src: url('./fonts/circe-bold.woff2') format('woff2'),
+                 url('./fonts/circe-bold.woff') format('woff');
             font-weight: 700;
             font-style: normal;
         }
-        /* Базовые стили */
+        /* Базовые стили (font-family остаётся 'Circe', sans-serif) */
         body {
             margin: 0;
             padding: 0;
@@ -619,5 +619,6 @@
 </html>
 
 ```
+
 
 
