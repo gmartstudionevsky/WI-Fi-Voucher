@@ -81,6 +81,33 @@
     button.is-loading{position:relative;pointer-events:none;opacity:.85}
     button.is-loading::after{content:'';position:absolute;right:.75rem;top:50%;width:1rem;height:1rem;margin-top:-.5rem;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+    /* Select styling */
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: .5rem;
+      padding: .75rem;
+      font: 1rem 'Circe', sans-serif;
+      color: var(--text);
+      background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg"%3E%3Cpolygon points="70,100 15,40 125,40" fill="%23666"%3E%3C/polygon%3E%3C/svg%3E');
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 0.65rem auto;
+    }
+    select:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(196, 154, 95, 0.3);
+    }
+    select:invalid {
+      color: #999;
+    }
+    select option {
+      color: var(--text);
+    }
     /* Mobile */
     @media (max-width:600px){
       header img.main-logo{max-width:150px}
@@ -91,6 +118,7 @@
       .form-section input[type="text"],.form-section input[type="number"],.form-section select{padding:.5rem;font-size:.95rem;margin-bottom:.5rem}
       button,select,input[type="text"],input[type="number"]{font-size:1rem;padding:.5rem}
       .intro-section{margin:1rem auto;padding:1rem;font-size:.95rem}
+      select {padding:.5rem;font-size:.95rem}
     }
   </style>
 </head>
