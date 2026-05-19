@@ -398,7 +398,7 @@
       const originalText = submitButton.textContent;
       submitButton.textContent = currentLanguage === 'ru' ? 'Запрашиваем…' : 'Requesting…';
       const data = { fio, apartment, num_devices: numDevices, language: currentLanguage };
-      const scriptUrl = 'https://script.google.com/macros/s/AKfycbwibvpVaqPn7o9XvuRCnM-HME1S5qRWll-eGYnI3jyT4UBFTgGtFh7Fu6-ElsAhE11z/exec';
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbzaAM4jvFkdfV5FGANK7FTzvJ2C0I1VaU5dInsQhyAB37g71jMyoR7PeESjQc5Jwd7JnA/exec';
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
       fetch(scriptUrl, {
