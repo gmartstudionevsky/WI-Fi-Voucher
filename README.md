@@ -55,6 +55,14 @@ Errors are returned as `{ "error": "..." }`. The frontend intentionally shows gu
 
 Apps Script stores the next voucher row in Script Properties as `NEXT_ROW`. If the request archive contains only the header row, the script treats the voucher list as fresh and resets a stale `NEXT_ROW` value back to row 2.
 
+## Operations
+
+- Run `resetNextRow()` in the Apps Script editor to reset voucher issuance to row 2.
+- Open the web app URL with `GET` to confirm the deployed script version. The response should include `status: "ok"` and `version`.
+- Run `getDebugState()` in the Apps Script editor to inspect `NEXT_ROW`, source sheet last row, and request archive last row.
+
+After changing Apps Script code, update the existing web app deployment with a new version. Saving the file alone does not update the public `/exec` endpoint.
+
 ## Safety Notes
 
 - Guest-entered values and voucher codes are rendered as text nodes, not trusted HTML.
