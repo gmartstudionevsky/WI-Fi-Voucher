@@ -34,11 +34,12 @@ function doPost(e) {
     const passwordsSheet = getRequiredSheet(spreadsheet, CONFIG.PASSWORDS_SHEET);
     const requestsSheet = getRequiredSheet(spreadsheet, CONFIG.REQUESTS_SHEET);
     const voucherCount = Math.ceil(numDevices / CONFIG.DEVICES_PER_VOUCHER);
-    const vouchers = reserveVouchers(passwordsSheet, voucherCount);
+    const reservation = reserveVouchers(passwordsSheet, requestsSheet, voucherCount);
 
-    appendRequest(requestsSheet, fio, apartment, vouchers);
+    appendRequest(requestsSheet, fio, apartment, reservation.vouchers);
+    reservation.commit();
 
-    return jsonOut({ vouchers, language });
+    return jsonOut({ vouchers: reservation.vouchers, language });
   } catch (error) {
     console.error('Error in doPost:', error);
     return jsonOut({ error: error && error.publicMessage ? error.publicMessage : 'Internal error' });
@@ -92,13 +93,15 @@ function getRequiredSheet(spreadsheet, sheetName) {
   return sheet;
 }
 
-function reserveVouchers(sheet, voucherCount) {
-  const lastRow = sheet.getLastRow();
+function reserveVouchers(passwordsSheet, requestsSheet, voucherCount) {
+  const props = PropertiesService.getScriptProperties();
+  reconcileNextRow(props, requestsSheet);
+
+  const lastRow = passwordsSheet.getLastRow();
   if (lastRow < CONFIG.FIRST_DATA_ROW) {
     throwPublicError('No vouchers available');
   }
 
-  const props = PropertiesService.getScriptProperties();
   const nextRow = getNextRow(props, lastRow);
   const rowsToRead = lastRow - nextRow + 1;
 
@@ -106,7 +109,7 @@ function reserveVouchers(sheet, voucherCount) {
     throwPublicError('Not enough vouchers');
   }
 
-  const values = sheet
+  const values = passwordsSheet
     .getRange(nextRow, CONFIG.VOUCHER_COLUMN, rowsToRead, 1)
     .getValues()
     .map((row) => normalizeText(row[0]));
@@ -128,8 +131,23 @@ function reserveVouchers(sheet, voucherCount) {
     throwPublicError('Not enough vouchers');
   }
 
-  props.setProperty(CONFIG.NEXT_ROW_PROPERTY, String(nextRow + consumedRows));
-  return vouchers;
+  const nextAvailableRow = nextRow + consumedRows;
+
+  return {
+    vouchers,
+    commit() {
+      props.setProperty(CONFIG.NEXT_ROW_PROPERTY, String(nextAvailableRow));
+    }
+  };
+}
+
+function reconcileNextRow(props, requestsSheet) {
+  const stored = Number.parseInt(props.getProperty(CONFIG.NEXT_ROW_PROPERTY), 10);
+  const archiveHasRequests = requestsSheet.getLastRow() > 1;
+
+  if (!archiveHasRequests && Number.isInteger(stored) && stored > CONFIG.FIRST_DATA_ROW) {
+    props.setProperty(CONFIG.NEXT_ROW_PROPERTY, String(CONFIG.FIRST_DATA_ROW));
+  }
 }
 
 function getNextRow(props, lastRow) {
