@@ -1,4 +1,5 @@
 const CONFIG = Object.freeze({
+  VERSION: '2026-05-21-next-row-diagnostics',
   SPREADSHEET_ID: '127zHlLiojIdj60UJ42vgIU1SlCftqyB-15C9Ur26YL0',
   PASSWORDS_SHEET: 'Пароли',
   REQUESTS_SHEET: 'запрошено через QR-код',
@@ -52,10 +53,36 @@ function doPost(e) {
   }
 }
 
+function doGet() {
+  return jsonOut({ status: 'ok', version: CONFIG.VERSION });
+}
+
 function doOptions() {
   return ContentService
     .createTextOutput('')
     .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function resetNextRow() {
+  PropertiesService
+    .getScriptProperties()
+    .setProperty(CONFIG.NEXT_ROW_PROPERTY, String(CONFIG.FIRST_DATA_ROW));
+
+  return `NEXT_ROW reset to ${CONFIG.FIRST_DATA_ROW}`;
+}
+
+function getDebugState() {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const passwordsSheet = getRequiredSheet(spreadsheet, CONFIG.PASSWORDS_SHEET);
+  const requestsSheet = getRequiredSheet(spreadsheet, CONFIG.REQUESTS_SHEET);
+  const props = PropertiesService.getScriptProperties();
+
+  return {
+    version: CONFIG.VERSION,
+    nextRow: props.getProperty(CONFIG.NEXT_ROW_PROPERTY) || null,
+    passwordsLastRow: passwordsSheet.getLastRow(),
+    requestsLastRow: requestsSheet.getLastRow()
+  };
 }
 
 function parseRequest(e) {
