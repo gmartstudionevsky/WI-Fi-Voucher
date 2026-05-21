@@ -53,7 +53,7 @@ Errors are returned as `{ "error": "..." }`. The frontend intentionally shows gu
 | --- | --- | --- | --- |
 | Дата и время | ФИО | № апартамента | Пароль |
 
-Apps Script stores the next voucher row in Script Properties as `NEXT_ROW`. Reset or remove this property only when the voucher list is intentionally reloaded from the start.
+Apps Script stores the next voucher row in Script Properties as `NEXT_ROW`. If the request archive contains only the header row, the script treats the voucher list as fresh and resets a stale `NEXT_ROW` value back to row 2.
 
 ## Safety Notes
 
